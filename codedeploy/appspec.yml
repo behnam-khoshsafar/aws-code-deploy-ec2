@@ -16,6 +16,10 @@ hooks:
     - location: aws/scripts/server_start.sh
       timeout: 300
       runas: root
+  ValidateService:
+    - location: aws/scripts/server_validation.sh
+      timeout: 300
+      runas: root
   ApplicationStop:
     - location: aws/scripts/server_stop.sh
       timeout: 300
