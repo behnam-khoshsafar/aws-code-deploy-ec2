@@ -35,5 +35,5 @@ jobs:
         run: mvn -Dmaven.test.skip=true clean install --file pom.xml
 
       - name: Upload Artifact to s3
-        working-directory: ${{ GITHUB_WORKSPACE }}/target
+        working-directory: ${{ github.workspace }}/target
         run: aws s3 cp *.zip s3://${{ env.S3BUCKET }}/
