@@ -7,6 +7,9 @@ env:
   AWS_REGION: eu-west-1
   S3BUCKET: aws-code-deploy-ec2
 
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build:
