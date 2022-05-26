@@ -4,6 +4,7 @@ on:
   workflow_dispatch: {}
 
 env:
+  applicationfolder: aws-code-deploy-ec2
   AWS_REGION: eu-west-1
   S3BUCKET: aws-code-deploy-ec2
 
@@ -35,7 +36,9 @@ jobs:
 
       - name: Build and Package Maven
         id: package
-        run: $GITHUB_WORKSPACE/.github/scripts/build.sh
+        working-directory: ${{ env.applicationfolder }}
+        run:  mvn -Dmaven.test.skip=true clean install --file pom.xml
 
       - name: Upload Artifact to s3
+        working-directory: ${{ env.applicationfolder }}/target
         run: aws s3 cp *.zip s3://${{ env.S3BUCKET }}/
