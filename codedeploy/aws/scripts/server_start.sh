@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 cd /usr/local/codedeployresources
-sudo java -jar -Dserver.port=80 *.jar
+sudo java -jar -Dserver.port=80 \
+    *.jar > /dev/null 2> /dev/null < /dev/null &
