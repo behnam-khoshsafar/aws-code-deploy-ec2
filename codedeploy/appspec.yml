@@ -1,0 +1,22 @@
+version: 0.0
+os: linux
+files:
+  - source: /aws
+    destination: /usr/local/codedeployresources
+hooks:
+  BeforeInstall:
+    - location: aws/scripts/server_clear.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: aws/scripts/fix_privileges.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: aws/scripts/server_start.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: aws/scripts/server_stop.sh
+      timeout: 300
+      runas: root
