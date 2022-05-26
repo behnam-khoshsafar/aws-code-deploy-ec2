@@ -1,0 +1,44 @@
+name: Build and Deploy
+
+on:
+  workflow_dispatch: {}
+
+env:
+  applicationfolder: aws-code-deploy-ec2
+  AWS_REGION: eu-west-1
+  S3BUCKET: aws-code-deploy-ec2
+
+
+jobs:
+  build:
+    name: Build and Package
+    runs-on: ubuntu-20.04
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout Repository
+
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+          role-session-name: GitHub-Action-Role
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v1
+        with:
+          java-version: 17
+
+      - name: chmod
+        run: chmod -R +x ./.github
+
+      - name: Build and Package Maven
+        id: package
+        working-directory: ${{ env.applicationfolder }}
+        run: $GITHUB_WORKSPACE/.github/scripts/build.sh
+
+      - name: Upload Artifact to s3
+        working-directory: ${{ env.applicationfolder }}/target
+        run: aws s3 cp *.zip s3://${{ env.S3BUCKET }}/
