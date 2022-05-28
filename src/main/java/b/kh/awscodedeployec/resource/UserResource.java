@@ -14,7 +14,9 @@ public class UserResource {
 
     @GetMapping(path = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<User>> getUsers() {
-        List<User> users = Arrays.asList(new User(1, "Behanm", 30), new User(2, "Josh", 40));
+        List<User> users = Arrays.asList(new User(1, "Behanm", 30),
+                                         new User(2, "Brian", 30),
+                                         new User(3, "Josh", 40));
         return ResponseEntity.ok(users);
     }
 
