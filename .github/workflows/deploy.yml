@@ -6,6 +6,10 @@ on:
 env:
   AWS_REGION: eu-west-1
   S3BUCKET: aws-code-deploy-ec2
+  CODE_DEPLOY_APPLICATION_NAME: demo-application
+  CODE_DEPLOY_GROUP_NAME: demo-application-dg
+  CODE_DEPLOY_BUCKET_NAME: aws-code-deploy-ec2
+  CODE_DEPLOY_BUCKET_KEY: aws-code-deploy-ec2-0.0.1-SNAPSHOT-dist.zip
 
 permissions:
   id-token: write
@@ -37,3 +41,21 @@ jobs:
       - name: Upload Artifact to s3
         working-directory: ${{ github.workspace }}/target
         run: aws s3 cp *.zip s3://${{ env.S3BUCKET }}/
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: Dev
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v2
+      - uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.IAMROLE_GITHUB }}
+          role-session-name: GitHub-Action-Role
+          aws-region: ${{ env.AWS_REGION }}
+      - run: |
+          echo "Create deployment using s3"
+          aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --deployment-group-name ${{ env.CODE_DEPLOY_GROUP_NAME }} --s3-location bucket=${{ env.CODE_DEPLOY_BUCKET_NAME }},bundleType=zip,key=${{ env.CODE_DEPLOY_BUCKET_KEY }} --ignore-application-stop-failures
